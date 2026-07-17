@@ -4,25 +4,25 @@ export default function BookingProcessSection() {
       id: 1,
       title: "Choose Your Service",
       desc: "Select the dermatology treatment you need — skin consultation, acne treatment, or hair care.",
-      img: "/booking1.jpg",
+      img: "/booking1.webp",
     },
     {
       id: 2,
       title: "Pick Date & Time",
       desc: "Choose your preferred appointment date and time that fits your schedule.",
-      img: "/booking2.jpg",
+      img: "/booking2.webp",
     },
     {
       id: 3,
       title: "Enter Details",
       desc: "Fill in your basic information and describe your skin concern for a better consultation.",
-      img: "/booking3.jpg",
+      img: "/booking3.webp",
     },
     {
       id: 4,
       title: "Confirm Your Booking",
       desc: "Review your details and confirm your appointment. Get instant confirmation and visit the clinic.",
-      img: "/booking4.jpg",
+      img: "/booking4.webp",
     },
   ];
 
