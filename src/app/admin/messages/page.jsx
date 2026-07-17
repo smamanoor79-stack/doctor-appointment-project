@@ -63,7 +63,8 @@ export default function AdminMessagesPage() {
     loadMessages();
 
     const interval = setInterval(() => {
-      loadMessages(true); 
+      loadMessages(true);
+    }, 5000); // har 5 second baad naye messages check karega
 
     return () => clearInterval(interval);
   }, [messages.length]);
