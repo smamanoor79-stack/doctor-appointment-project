@@ -17,7 +17,6 @@ export default function Services() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Database se services fetch karna
   useEffect(() => {
     async function fetchServices() {
       try {

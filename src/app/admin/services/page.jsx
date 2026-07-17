@@ -15,7 +15,6 @@ import {
   X
 } from "lucide-react";
 
-// Icon mapping taake database ki string se icon render ho sake
 const iconMap = { Stethoscope, Sparkles, Syringe, ShieldCheck, Zap, Wand2 };
 
 export default function AdminServices() {

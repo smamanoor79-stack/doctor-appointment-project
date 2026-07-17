@@ -19,15 +19,10 @@ const DAY_LABEL = {
 
 const DAY_ORDER = Object.keys(DAY_LABEL);
 
-// Turns the workingHours array saved by the admin dashboard
-// (schema: [{ day: "Monday", closed, morning: {open, close}, evening: {open, close} }, ...])
-// into a short human-readable summary, e.g.
-// "Mon – Sat: 10:00 AM – 2:00 PM, 5:00 PM – 9:00 PM", grouping consecutive
-// days that share identical hours, and listing closed days separately.
 function formatWorkingHours(workingHours) {
   if (!Array.isArray(workingHours) || workingHours.length === 0) return null;
 
-  // Make sure we always walk Monday -> Sunday regardless of array order in the DB.
+  
   const byDay = Object.fromEntries(workingHours.map((d) => [d.day, d]));
   const ordered = DAY_ORDER.filter((day) => byDay[day]).map((day) => byDay[day]);
 

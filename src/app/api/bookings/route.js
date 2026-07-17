@@ -1,13 +1,24 @@
 import { connectDB } from "@/lib/db";
 import Booking from "@/models/Booking";
 import { sendBookingReceivedEmails, sendClinicBookingConfirmedEmail } from "@/lib/email";
+import { cookies } from "next/headers";
 
 function generateBookingNumber() {
   return "BK" + Math.floor(10000000 + Math.random() * 90000000);
 }
 
+async function isAuthorized() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session");
+  return session && session.value === process.env.ADMIN_PASSWORD;
+}
+
 export async function GET() {
   try {
+    if (!(await isAuthorized())) {
+      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     await connectDB();
     const bookings = await Booking.find().sort({ createdAt: -1 });
     return Response.json({ success: true, bookings });
@@ -67,7 +78,6 @@ export async function POST(req) {
       bookingNumber: generateBookingNumber(),
     });
 
-    // Fire the right email depending on whether payment needs review
     if (resolvedPaymentStatus === "pending") {
       await sendBookingReceivedEmails(booking);
     } else if (resolvedPaymentStatus === "not_required") {

@@ -111,8 +111,6 @@ function ServiceTag({ service }) {
   );
 }
 
-// Shows the appointment type with a matching icon (Chat / Audio Call / Video Call / Clinic Visit).
-// Falls back to "Clinic Visit" + building icon if older bookings are missing this field.
 function TypeTag({ type }) {
   const Icon = typeIcon[type] || Building2;
   return (

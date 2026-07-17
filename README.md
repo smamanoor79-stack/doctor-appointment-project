@@ -133,4 +133,4 @@ Open [http://localhost:3000](http://localhost:3000) to view the public site, and
 
 ## 📄 License
 
-This project was built for Dr. Ahsan Malik's Clinic. All rights reserved.
+This project was built by Smama Noor as a personal practice project. All rights reserved.

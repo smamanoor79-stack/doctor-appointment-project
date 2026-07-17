@@ -28,22 +28,18 @@ export default function BookingProcessSection() {
 
   return (
     <section className="bg-primarySoft py-20 px-6 relative overflow-hidden">
-      {/* Sparkle background details updated to your primary color with low opacity */}
       <div className="absolute top-16 left-10 text-primary/10 text-7xl font-bold select-none pointer-events-none">✨</div>
       <div className="absolute bottom-16 right-10 text-primary/10 text-7xl font-bold select-none pointer-events-none">✨</div>
 
       <div className="max-w-7xl mx-auto text-center mb-16 relative z-10">
-        {/* Badge: Changed to text-accent for a cleaner look or keep primary */}
         <div className="inline-flex items-center bg-white text-primary font-extrabold px-6 py-2 rounded-full text-sm uppercase tracking-widest mb-4 shadow-sm">
           ✨ Booking Process
         </div>
 
-        {/* FIX: Changed from text-white to text-primary so it sharply stands out */}
         <h2 className="text-4xl md:text-5xl font-extrabold text-primary mb-5 tracking-tight">
           How Booking <span className="text-accent">Works</span> For You
         </h2>
 
-        {/* FIX: Changed from text-white/80 to text-dark/80 for crystal-clear readability */}
         <p className="text-base md:text-lg text-dark/80 max-w-2xl mx-auto leading-relaxed">
           Booking an appointment with Dr. Ahsan Malik&apos;s Clinic is simple — just four easy
           steps stand between you and healthier, more confident skin.
@@ -74,7 +70,6 @@ export default function BookingProcessSection() {
                 <h3 className="text-lg font-extrabold text-primary hover:text-accent mb-2">
                   {step.title}
                 </h3>
-                {/* Description text uses standard clean dark */}
                 <p className="text-sm text-dark/70 leading-relaxed">
                   {step.desc}
                 </p>

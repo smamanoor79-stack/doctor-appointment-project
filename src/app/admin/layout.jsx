@@ -38,7 +38,6 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // Login page gets no sidebar, no chrome — just a blank canvas for the form
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
@@ -47,8 +46,6 @@ export default function AdminLayout({ children }) {
     setLoggingOut(true);
     try {
       await fetch("/api/admin/logout", { method: "POST" });
-      // Hard navigation — fully remounts everything, so no leftover state
-      // (like "Logging out...") can carry over into the next session.
       window.location.href = "/admin/login";
     } catch (err) {
       setLoggingOut(false);
@@ -79,7 +76,6 @@ export default function AdminLayout({ children }) {
 
           <nav className="flex flex-col gap-1">
             {navItems.map(({ icon: Icon, label, href }) => {
-              // "/admin" should only be active on exact match, others match by prefix
               const isActive = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
               return (
                 <Link

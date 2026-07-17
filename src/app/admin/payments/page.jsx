@@ -65,7 +65,6 @@ function statusStyle(paymentStatus) {
   return STATUS_OPTIONS.find((s) => s.value === paymentStatus) || STATUS_OPTIONS[1];
 }
 
-// Single dropdown replaces the old status pill + check/cross action buttons
 function PaymentStatusDropdown({ booking, onChange, disabled }) {
   const s = statusStyle(booking.paymentStatus);
   return (
@@ -125,7 +124,7 @@ export default function PaymentsPage() {
     loadBookings();
   }, []);
 
-  // Now takes the new paymentStatus directly from the dropdown instead of an "approve"/"reject" action
+
   async function handleStatusChange(id, paymentStatus) {
     setActingId(id);
     try {

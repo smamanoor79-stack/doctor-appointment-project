@@ -1,4 +1,4 @@
-// src/app/api/services/route.js
+
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Service from "@/models/Service";
@@ -21,7 +21,7 @@ export async function GET() {
       ];
       
       await Service.insertMany(dummyServices);
-      services = await Service.find({}); // Dubara fetch karein insert karne ke baad
+      services = await Service.find({}); 
     }
 
     return NextResponse.json(services, { status: 200 });

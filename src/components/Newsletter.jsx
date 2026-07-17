@@ -29,7 +29,6 @@ export default function Newsletter() {
         </svg>
       </div>
 
-      {/* Lotion Bottle Badge - matches hero section */}
       <div className="hidden md:flex absolute bottom-8 left-[6%] w-16 h-16 lg:w-20 lg:h-20 bg-white rounded-2xl items-center justify-center shadow-lg text-3xl lg:text-4xl rotate-[-8deg] z-20">
         🧴
       </div>
@@ -37,7 +36,6 @@ export default function Newsletter() {
       {/* ─── MAIN CARD CONTAINER ─── */}
       <div className="max-w-7xl mx-auto bg-white rounded-[2.5rem] p-8 md:p-14 lg:p-16 shadow-sm border border-primarySoft/30 flex flex-col lg:flex-row items-center justify-between gap-10 relative">
         
-        {/* Card Internal Decorative Element (Right Side Floating Sparks) */}
         <div className="absolute right-6 top-6 text-accent/10 hidden sm:block">
           <svg width="68" height="68" viewBox="0 0 68 68" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M22 0L24.5 16.5L41 19L24.5 21.5L22 38L19.5 21.5L3 19L19.5 16.5L22 0Z" />

@@ -123,6 +123,7 @@ function getDayConfig(date, workingHours) {
 // Builds { Morning: [...], Evening: [...] } for the selected date using admin's
 // workingHours + slotDuration. Returns null if no date/content yet, or a
 // { closed: true } shape if the clinic is closed that day.
+
 function getSlotsForDate(dateStr, content) {
     if (!dateStr) return null;
 

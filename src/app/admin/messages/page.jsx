@@ -63,8 +63,7 @@ export default function AdminMessagesPage() {
     loadMessages();
 
     const interval = setInterval(() => {
-      loadMessages(true); // background polling, loader nahi dikhayega
-    }, 10000); // har 10 second
+      loadMessages(true); 
 
     return () => clearInterval(interval);
   }, [messages.length]);

@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import ContactMessage from "@/models/ContactMessage";
-// import { requireAdmin } from "@/lib/auth"; 
+import { cookies } from "next/headers";
 
 export async function GET(req) {
   try {
-    // await requireAdmin(req); // uncomment + wire up to your existing admin auth check
+    const cookieStore = await cookies();
+    const session = cookieStore.get("admin_session");
+
+    if (!session || session.value !== process.env.ADMIN_PASSWORD) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
 
     await connectDB();
     const messages = await ContactMessage.find({}).sort({ createdAt: -1 });

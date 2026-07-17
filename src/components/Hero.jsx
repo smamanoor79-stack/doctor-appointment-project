@@ -56,7 +56,6 @@ export default function Hero() {
       {/* Decorative blob behind doctor image */}
       <div className="hidden md:block absolute right-0 top-0 w-[560px] h-[560px] lg:w-[640px] lg:h-[640px] bg-accent/25 rounded-full blur-3xl z-0"></div>
 
-      {/* Doctor image - desktop: bigger, full-bleed to right edge */}
       <div className="hidden md:block absolute bottom-0 right-0 lg:right-4 h-full z-10">
         <img
           src="/banner-doctor.svg"

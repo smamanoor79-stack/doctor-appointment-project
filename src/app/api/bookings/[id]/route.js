@@ -1,9 +1,20 @@
 import { connectDB } from "@/lib/db";
 import Booking from "@/models/Booking";
 import { sendApprovedEmail, sendRejectedEmail } from "@/lib/email";
+import { cookies } from "next/headers";
+
+async function isAuthorized() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session");
+  return session && session.value === process.env.ADMIN_PASSWORD;
+}
 
 export async function PATCH(req, { params }) {
   try {
+    if (!(await isAuthorized())) {
+      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     await connectDB();
     const body = await req.json();
     const { action, paymentStatus, name, email, phone, service, appointmentType, date, timeSlot } = body;
@@ -54,10 +65,6 @@ export async function PATCH(req, { params }) {
       return Response.json({ success: false, message: "Booking not found" }, { status: 404 });
     }
 
-    // Send confirmation/rejection emails for both the direct approve/reject
-    // actions (Dashboard buttons) AND the set_payment action (Appointments
-    // page payment dropdown) — previously only approve/reject triggered mail,
-    // so bookings confirmed via the dropdown never got an email.
     if (action === "approve") {
       await sendApprovedEmail(booking);
     } else if (action === "reject") {
@@ -79,6 +86,10 @@ export async function PATCH(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
+    if (!(await isAuthorized())) {
+      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     await connectDB();
     const { id } = await params;
 
