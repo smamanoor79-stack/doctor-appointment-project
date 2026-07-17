@@ -45,7 +45,7 @@ export default function Services() {
 
         {/* Hero Image */}
         <div className="relative w-full h-75 md:h-100 rounded-3xl overflow-hidden border-4 border-accent/30 mb-14">
-          <Image src="/servi1.jpeg" alt="Dermatology" fill className="object-cover" priority />
+          <Image src="/servi1.webp" alt="Dermatology" fill className="object-cover" priority />
         </div>
 
         {/* ===== Services list (Dynamic from DB) ===== */}

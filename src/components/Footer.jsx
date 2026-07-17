@@ -41,6 +41,7 @@ export default function Footer() {
   const facebookLink = content?.socials?.facebook || "#";
   const instagramLink = content?.socials?.instagram || "#";
   const tiktokLink = content?.socials?.tiktok || "#";
+  const linkedinLink = content?.socials?.linkedin || "";
 
   return (
     <footer className="relative bg-primary overflow-hidden pt-10 pb-6 px-6 md:px-12">
@@ -61,10 +62,10 @@ export default function Footer() {
                 href={facebookLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="facebook"
-                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent transition-colors"
+                aria-label="Visit our Facebook page"
+                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent focus-visible:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
                   <path d="M13.5 9H15V6.5h-1.5C11.57 6.5 10 8.07 10 10v1.5H8V14h2v7h2.5v-7H15l.5-2.5h-3V10c0-.55.45-1 1-1z" />
                 </svg>
               </a>
@@ -72,10 +73,10 @@ export default function Footer() {
                 href={tiktokLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="tiktok"
-                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent transition-colors"
+                aria-label="Visit our TikTok page"
+                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent focus-visible:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
                   <path d="M16.5 3h-2.9v12.2a2.6 2.6 0 11-2.2-2.57v-2.94a5.55 5.55 0 105.1 5.53V9.3a7.5 7.5 0 004.5 1.5V7.9a4.6 4.6 0 01-4.5-4.9z" />
                 </svg>
               </a>
@@ -83,66 +84,81 @@ export default function Footer() {
                 href={instagramLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="instagram"
-                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent transition-colors"
+                aria-label="Visit our Instagram page"
+                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent focus-visible:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
               >
-                <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 text-white">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 text-white">
                   <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.8" />
                   <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" />
                   <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
                 </svg>
               </a>
-              <a
-                href="#"
-                aria-label="linkedin"
-                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent transition-colors"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
-                  <path d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3.5a1.96 1.96 0 100 3.92 1.96 1.96 0 000-3.92zM20.44 20h-3.37v-5.9c0-1.4-.03-3.2-1.95-3.2-1.96 0-2.26 1.53-2.26 3.1V20H9.5V8.5h3.24v1.57h.05c.45-.85 1.55-1.75 3.2-1.75 3.42 0 4.05 2.25 4.05 5.18V20z" />
-                </svg>
-              </a>
+              {/* Only render LinkedIn if a real link exists — placeholder "#" links confuse screen readers */}
+              {linkedinLink && (
+                <a
+                  href={linkedinLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit our LinkedIn page"
+                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-accent focus-visible:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-white transition-colors"
+                >
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-white">
+                    <path d="M6.94 8.5H3.56V20h3.38V8.5zM5.25 3.5a1.96 1.96 0 100 3.92 1.96 1.96 0 000-3.92zM20.44 20h-3.37v-5.9c0-1.4-.03-3.2-1.95-3.2-1.96 0-2.26 1.53-2.26 3.1V20H9.5V8.5h3.24v1.57h.05c.45-.85 1.55-1.75 3.2-1.75 3.42 0 4.05 2.25 4.05 5.18V20z" />
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
 
           {/* Column 1 */}
-          <div>
-            <h4 className="text-white text-sm font-semibold mb-2">Company</h4>
-            <div className="w-6 h-0.5 bg-accent mb-2" />
-            <ul className="space-y-2 text-white/70 text-xs">
-              <li><a href="#about" className="hover:text-accent transition-colors">About</a></li>
-              <li><a href="#services" className="hover:text-accent transition-colors">Services</a></li>
-              <li><a href="#why-us" className="hover:text-accent transition-colors">Why Choose Us</a></li>
-              <li><a href="#booking" className="hover:text-accent transition-colors">Book Appointment</a></li>
+          <nav aria-labelledby="footer-company-heading">
+            <h4 id="footer-company-heading" className="text-white text-sm font-semibold mb-2">Company</h4>
+            <div className="w-6 h-0.5 bg-accent mb-2" aria-hidden="true" />
+            <ul className="space-y-2 text-white/80 text-xs">
+              <li><a href="#about" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">About</a></li>
+              <li><a href="#services" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Services</a></li>
+              <li><a href="#why-us" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Why Choose Us</a></li>
+              <li><a href="#booking" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Book Appointment</a></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Column 2 */}
-          <div>
-            <h4 className="text-white text-sm font-semibold mb-2">Explore</h4>
-            <div className="w-6 h-0.5 bg-accent mb-2" />
-            <ul className="space-y-2 text-white/70 text-xs">
-              <li><a href="#testimonials" className="hover:text-accent transition-colors">Testimonials</a></li>
-              <li><a href="#faq" className="hover:text-accent transition-colors">FAQs</a></li>
-              <li><a href="#contact" className="hover:text-accent transition-colors">Contact Us</a></li>
+          <nav aria-labelledby="footer-explore-heading">
+            <h4 id="footer-explore-heading" className="text-white text-sm font-semibold mb-2">Explore</h4>
+            <div className="w-6 h-0.5 bg-accent mb-2" aria-hidden="true" />
+            <ul className="space-y-2 text-white/80 text-xs">
+              <li><a href="#testimonials" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Testimonials</a></li>
+              <li><a href="#faq" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">FAQs</a></li>
+              <li><a href="#contact" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Contact Us</a></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
             <h4 className="text-white text-sm font-semibold mb-2">Get In Touch</h4>
-            <div className="w-6 h-0.5 bg-accent mb-2" />
-            <ul className="space-y-2 text-white/70 text-xs">
-              <li>{address}</li>
-              <li>{email}</li>
-              <li>{phone}</li>
-            </ul>
+            <div className="w-6 h-0.5 bg-accent mb-2" aria-hidden="true" />
+            <address className="not-italic">
+              <ul className="space-y-2 text-white/80 text-xs">
+                <li>{address}</li>
+                <li>
+                  <a href={`mailto:${email}`} className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">
+                    {email}
+                  </a>
+                </li>
+                <li>
+                  <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">
+                    {phone}
+                  </a>
+                </li>
+              </ul>
+            </address>
           </div>
         </div>
 
         <div className="lg:col-span-4 relative h-40 md:h-56 -mb-6 lg:-mb-8 lg:-mr-12">
           <Image
             src="/footer.webp"
-            alt="Skincare treatment"
+            alt="Dermatologist performing a skincare treatment on a patient"
             loading="eager"
             fill
             sizes="(max-width: 1024px) 100vw, 33vw"
@@ -151,20 +167,21 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto mt-8 pt-4 border-t border-white/15 flex flex-col md:flex-row items-center justify-between gap-2 text-white/60 text-xs">
+      <div className="relative max-w-7xl mx-auto mt-8 pt-4 border-t border-white/15 flex flex-col md:flex-row items-center justify-between gap-2 text-white/70 text-xs">
         <p>{footerText}</p>
         <div className="flex gap-4">
-          <a href="#" className="hover:text-accent transition-colors">Terms & Conditions</a>
-          <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
+          <a href="/terms" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Terms &amp; Conditions</a>
+          <a href="/privacy" className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors">Privacy Policy</a>
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto mt-2 text-center text-white/50 text-[11px]">
+      <div className="relative max-w-7xl mx-auto mt-2 text-center text-white/70 text-[11px]">
         <p>
-          Designed and Developed by Smama with ❤️ —{" "}
+          Designed and Developed by Smama with <span aria-hidden="true">❤️</span>
+          <span className="sr-only">love</span> —{" "}
           <a
             href="mailto:smamanoor79@gmail.com"
-            className="hover:text-accent transition-colors"
+            className="hover:text-accent focus-visible:text-accent focus-visible:underline transition-colors"
           >
             smamanoor79@gmail.com
           </a>
