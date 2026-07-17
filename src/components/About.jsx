@@ -29,7 +29,7 @@ export default function AboutSection() {
           {/* Main Round Image Container */}
           <div className="w-[360px] h-[360px] md:w-[420px] md:h-[420px] rounded-full overflow-hidden border-8 border-white/90 shadow-xl relative z-10">
             <img
-              src="/aboutpic.avif"
+              src="/aboutpic.webp"
               alt="Skin Treatment Analysis"
               className="w-full h-full object-cover"
             />

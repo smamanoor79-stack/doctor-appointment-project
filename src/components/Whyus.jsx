@@ -9,7 +9,7 @@ export default function WhyUs() {
 
           <div className="absolute top-0 left-0 w-[78%] h-[380px] md:h-[460px] rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.35)]">
             <img
-              src="/whyus1.jpg"
+              src="/whyus1.webp"
               alt="Dermatology clinic care"
               className="w-full h-full object-cover"
             />
@@ -18,7 +18,7 @@ export default function WhyUs() {
           {/* small overlapping image */}
           <div className="absolute bottom-0 right-0 w-[55%] h-[240px] md:h-[300px] rounded-2xl overflow-hidden border-4 md:border-[6px] border-white shadow-[0_15px_35px_rgba(0,0,0,0.35)]">
             <img
-              src="/whyus2.jpg"
+              src="/whyus2.webp"
               alt="Skin treatment closeup"
               className="w-full h-full object-cover"
             />

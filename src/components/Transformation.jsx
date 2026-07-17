@@ -89,13 +89,13 @@ export default function TransformationSection() {
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
         <BeforeAfterCard
-          beforeImg="/before1.jpeg"
-          afterImg="/after1.jpeg"
+          beforeImg="/before1.webp"
+          afterImg="/after1.webp"
           label="Acne Scar Treatment"
         />
         <BeforeAfterCard
-          beforeImg="/before2.jpeg"
-          afterImg="/after2.jpeg"
+          beforeImg="/before2.webp"
+          afterImg="/after2.webp"
           label="Skin Rejuvenation"
         />
       </div>

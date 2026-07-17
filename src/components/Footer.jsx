@@ -141,7 +141,7 @@ export default function Footer() {
 
         <div className="lg:col-span-4 relative h-40 md:h-56 -mb-6 lg:-mb-8 lg:-mr-12">
           <Image
-            src="/footer.jpg"
+            src="/footer.webp"
             alt="Skincare treatment"
             loading="eager"
             fill

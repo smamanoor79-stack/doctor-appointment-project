@@ -58,7 +58,7 @@ export default function Hero() {
 
       <div className="hidden md:block absolute bottom-0 right-0 lg:right-4 h-full z-10">
         <img
-          src="/banner-doctor.svg"
+          src="/banner-doctor.webp"
           alt="Dermatologist"
           className="h-full w-auto object-contain object-bottom"
         />
