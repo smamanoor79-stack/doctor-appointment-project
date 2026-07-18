@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -58,8 +59,9 @@ export default function AdminLogin() {
         <button
           type="submit"
           disabled={loading || !password}
-          className="w-full bg-[#16302A] text-white font-semibold py-3 rounded-xl disabled:opacity-50"
+          className="w-full bg-[#16302A] text-white font-semibold py-3 rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
         >
+          {loading && <Loader2 size={18} className="animate-spin" />}
           {loading ? "Checking..." : "Login"}
         </button>
       </form>

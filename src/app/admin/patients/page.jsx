@@ -135,10 +135,10 @@ export default function PatientsPage() {
   }, [bookings, search]);
 
   return (
-    <main className="px-6 md:px-10 py-7 max-w-[1400px]" style={{ color: token.ink }}>
+    <main className="px-4 sm:px-6 md:px-10 py-5 md:py-7 max-w-[1400px]" style={{ color: token.ink }}>
       <div className="flex items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="font-display font-semibold text-2xl md:text-[28px]" style={{ color: token.ink }}>
+          <h1 className="font-display font-semibold text-xl sm:text-2xl md:text-[28px]" style={{ color: token.ink }}>
             Patients
           </h1>
           <p className="text-sm mt-1" style={{ color: token.inkSoft }}>
@@ -147,7 +147,7 @@ export default function PatientsPage() {
         </div>
         <button
           onClick={loadBookings}
-          className="w-10 h-10 rounded-xl flex items-center justify-center border"
+          className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center border"
           style={{ borderColor: token.line, background: token.card }}
         >
           <RefreshCw size={16} style={{ color: token.ink }} className={loading ? "animate-spin" : ""} />
@@ -174,55 +174,108 @@ export default function PatientsPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
-        <table className="w-full text-sm">
-          <thead>
-            <tr style={{ color: token.inkSoft, borderBottom: `1px solid ${token.line}` }} className="text-xs uppercase tracking-wide font-semibold">
-              <td className="px-5 py-3">Patient</td>
-              <td className="px-5 py-3">Contact</td>
-              <td className="px-5 py-3">Service</td>
-              <td className="px-5 py-3">Date & Time</td>
-              <td className="px-5 py-3">Status</td>
-              <td className="px-5 py-3">Amount</td>
-              <td className="px-5 py-3">Action</td>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((b) => (
-              <tr key={b._id} style={{ borderTop: `1px solid ${token.line}` }}>
-                <td className="px-5 py-4 font-semibold" style={{ color: token.ink }}>{b.name}</td>
-                <td className="px-5 py-4 text-xs" style={{ color: token.inkSoft }}>
-                  {b.email}<br />{b.phone}
-                </td>
-                <td className="px-5 py-4"><ServiceTag service={b.service} /></td>
-                <td className="px-5 py-4 font-mono-data text-xs" style={{ color: token.inkSoft }}>
-                  {b.dateLabel || b.date}, {b.timeSlot}
-                </td>
-                <td className="px-5 py-4"><StatusPill status={b.status} /></td>
-                <td className="px-5 py-4 text-xs" style={{ color: token.ink }}>Rs. {(b.amount || 0).toLocaleString()}</td>
-                <td className="px-5 py-4">
-                  <button
-                    onClick={() => handleDelete(b._id)}
-                    disabled={deletingId === b._id}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors disabled:opacity-50"
-                    style={{ borderColor: token.line, background: token.card }}
-                    title="Delete booking"
-                  >
-                    <Trash2 size={14} style={{ color: token.roseDeep }} />
-                  </button>
-                </td>
+      {/* Desktop / tablet: table */}
+      <div
+        className="hidden md:block rounded-2xl border overflow-hidden"
+        style={{ background: token.card, borderColor: token.line }}
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ color: token.inkSoft, borderBottom: `1px solid ${token.line}` }} className="text-xs uppercase tracking-wide font-semibold">
+                <td className="px-5 py-3 whitespace-nowrap">Patient</td>
+                <td className="px-5 py-3 whitespace-nowrap">Contact</td>
+                <td className="px-5 py-3 whitespace-nowrap">Service</td>
+                <td className="px-5 py-3 whitespace-nowrap">Date & Time</td>
+                <td className="px-5 py-3 whitespace-nowrap">Status</td>
+                <td className="px-5 py-3 whitespace-nowrap">Amount</td>
+                <td className="px-5 py-3 whitespace-nowrap">Action</td>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {filtered.map((b) => (
+                <tr key={b._id} style={{ borderTop: `1px solid ${token.line}` }}>
+                  <td className="px-5 py-4 font-semibold whitespace-nowrap" style={{ color: token.ink }}>{b.name}</td>
+                  <td className="px-5 py-4 text-xs whitespace-nowrap" style={{ color: token.inkSoft }}>
+                    {b.email}<br />{b.phone}
+                  </td>
+                  <td className="px-5 py-4 whitespace-nowrap"><ServiceTag service={b.service} /></td>
+                  <td className="px-5 py-4 font-mono-data text-xs whitespace-nowrap" style={{ color: token.inkSoft }}>
+                    {b.dateLabel || b.date}, {b.timeSlot}
+                  </td>
+                  <td className="px-5 py-4 whitespace-nowrap"><StatusPill status={b.status} /></td>
+                  <td className="px-5 py-4 text-xs whitespace-nowrap" style={{ color: token.ink }}>Rs. {(b.amount || 0).toLocaleString()}</td>
+                  <td className="px-5 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleDelete(b._id)}
+                      disabled={deletingId === b._id}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors disabled:opacity-50"
+                      style={{ borderColor: token.line, background: token.card }}
+                      title="Delete booking"
+                    >
+                      <Trash2 size={14} style={{ color: token.roseDeep }} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
 
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-5 py-8 text-center text-sm" style={{ color: token.inkSoft }}>
-                  {loading ? "Loading patients…" : "No patients found."}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-8 text-center text-sm" style={{ color: token.inkSoft }}>
+                    {loading ? "Loading patients…" : "No patients found."}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile: stacked cards */}
+      <div className="md:hidden space-y-3">
+        {filtered.map((b) => (
+          <div
+            key={b._id}
+            className="rounded-2xl border p-4"
+            style={{ background: token.card, borderColor: token.line }}
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-sm truncate" style={{ color: token.ink }}>{b.name}</p>
+                <p className="text-xs mt-0.5 truncate" style={{ color: token.inkSoft }}>{b.email}</p>
+                <p className="text-xs truncate" style={{ color: token.inkSoft }}>{b.phone}</p>
+              </div>
+              <button
+                onClick={() => handleDelete(b._id)}
+                disabled={deletingId === b._id}
+                className="w-8 h-8 shrink-0 rounded-lg flex items-center justify-center border transition-colors disabled:opacity-50"
+                style={{ borderColor: token.line, background: token.card }}
+                title="Delete booking"
+              >
+                <Trash2 size={14} style={{ color: token.roseDeep }} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <ServiceTag service={b.service} />
+              <StatusPill status={b.status} />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-2" style={{ borderTop: `1px solid ${token.line}`, color: token.inkSoft }}>
+              <span className="font-mono-data">{b.dateLabel || b.date}, {b.timeSlot}</span>
+              <span className="font-semibold" style={{ color: token.ink }}>Rs. {(b.amount || 0).toLocaleString()}</span>
+            </div>
+          </div>
+        ))}
+
+        {filtered.length === 0 && (
+          <div
+            className="rounded-2xl border px-5 py-8 text-center text-sm"
+            style={{ background: token.card, borderColor: token.line, color: token.inkSoft }}
+          >
+            {loading ? "Loading patients…" : "No patients found."}
+          </div>
+        )}
       </div>
     </main>
   );

@@ -14,6 +14,8 @@ import {
   MessageSquare,
   ChevronRight,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 
 const token = {
@@ -37,6 +39,7 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   if (pathname === "/admin/login") {
     return <>{children}</>;
@@ -52,6 +55,78 @@ export default function AdminLayout({ children }) {
     }
   }
 
+  const sidebarContent = (
+    <>
+      <div>
+        <div className="px-2 mb-8 flex items-center justify-between">
+          <div>
+            <p className="font-display font-semibold text-xl text-white leading-tight">
+              Dr. Ahsan <span style={{ color: token.coral }}>Malik</span>
+            </p>
+            <p className="text-[11px] tracking-wide uppercase mt-1 font-semibold" style={{ color: "#B9CBBF" }}>
+              Clinic Dashboard
+            </p>
+          </div>
+          <button
+            onClick={() => setMobileNavOpen(false)}
+            className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+            style={{ background: token.forestSoft }}
+          >
+            <X size={16} color="#EAF0EC" />
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-1">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const isActive = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+            return (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setMobileNavOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors text-left"
+                style={{
+                  background: isActive ? token.coral : "transparent",
+                  color: isActive ? token.forest : "#EAF0EC",
+                  fontWeight: isActive ? 700 : 600,
+                }}
+              >
+                <Icon size={17} strokeWidth={2} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="rounded-2xl p-4" style={{ background: token.forestSoft }}>
+          <p className="text-xs leading-relaxed" style={{ color: "#C7D4CC" }}>
+            Need to review pending payments?
+          </p>
+          <Link
+            href="/admin/payments"
+            onClick={() => setMobileNavOpen(false)}
+            className="mt-3 text-xs font-semibold flex items-center gap-1"
+            style={{ color: token.coral }}
+          >
+            Review queue <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm text-black hover:text-white transition-all disabled:opacity-50 hover:brightness-95 active:scale-[0.98]"
+          style={{ fontWeight: 700, background: token.coral }}
+        >
+          <LogOut size={16} strokeWidth={2.5} />
+          {loggingOut ? "Logging out..." : "Logout"}
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div
       className="min-h-screen w-full flex"
@@ -63,67 +138,52 @@ export default function AdminLayout({ children }) {
         .font-mono-data { font-family: 'IBM Plex Mono', monospace; }
       `}</style>
 
-      <aside className="w-64 shrink-0 hidden md:flex flex-col justify-between py-6 px-4 sticky top-0 h-screen overflow-y-auto" style={{ background: token.forest }}>
-        <div>
-          <div className="px-2 mb-8">
-            <p className="font-display font-semibold text-xl text-white leading-tight">
-              Dr. Ahsan <span style={{ color: token.coral }}>Malik</span>
-            </p>
-            <p className="text-[11px] tracking-wide uppercase mt-1 font-semibold" style={{ color: "#B9CBBF" }}>
-              Clinic Dashboard
-            </p>
-          </div>
+      {/* Mobile top bar with hamburger — only visible below md */}
+      <div
+        className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3"
+        style={{ background: token.forest }}
+      >
+        <p className="font-display font-semibold text-lg text-white leading-tight">
+          Dr. Ahsan <span style={{ color: token.coral }}>Malik</span>
+        </p>
+        <button
+          onClick={() => setMobileNavOpen(true)}
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
+          style={{ background: token.forestSoft }}
+        >
+          <Menu size={18} color="#EAF0EC" />
+        </button>
+      </div>
 
-          <nav className="flex flex-col gap-1">
-            {navItems.map(({ icon: Icon, label, href }) => {
-              const isActive = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
-              return (
-                <Link
-                  key={label}
-                  href={href}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors text-left"
-                  style={{
-                    background: isActive ? token.coral : "transparent",
-                    color: isActive ? token.forest : "#EAF0EC",
-                    fontWeight: isActive ? 700 : 600,
-                  }}
-                >
-                  <Icon size={17} strokeWidth={2} />
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+      {/* Backdrop for mobile drawer */}
+      {mobileNavOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/40"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
 
-        <div className="flex flex-col gap-3">
-          <div className="rounded-2xl p-4" style={{ background: token.forestSoft }}>
-            <p className="text-xs leading-relaxed" style={{ color: "#C7D4CC" }}>
-              Need to review pending payments?
-            </p>
-            <Link
-              href="/admin/payments"
-              className="mt-3 text-xs font-semibold flex items-center gap-1"
-              style={{ color: token.coral }}
-            >
-              Review queue <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm text-black hover:text-white transition-all disabled:opacity-50 hover:brightness-95 active:scale-[0.98]"
-            style={{ fontWeight: 700, background: token.coral }}
-          >
-            <LogOut size={16} strokeWidth={2.5} />
-            {loggingOut ? "Logging out..." : "Logout"}
-          </button>
-        </div>
+      {/* Mobile slide-in drawer */}
+      <aside
+        className="md:hidden fixed top-0 left-0 z-50 w-64 h-screen flex flex-col justify-between py-6 px-4 transition-transform duration-300 ease-in-out"
+        style={{
+          background: token.forest,
+          transform: mobileNavOpen ? "translateX(0)" : "translateX(-100%)",
+        }}
+      >
+        {sidebarContent}
       </aside>
 
-      {/* Page content renders here */}
-      <div className="flex-1">{children}</div>
+      {/* Desktop sidebar — unchanged, always visible from md up */}
+      <aside
+        className="w-64 shrink-0 hidden md:flex flex-col justify-between py-6 px-4 sticky top-0 h-screen overflow-y-auto"
+        style={{ background: token.forest }}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Page content renders here. Top padding on mobile clears the fixed top bar. */}
+      <div className="flex-1 min-w-0 pt-14 md:pt-0">{children}</div>
     </div>
   );
 }

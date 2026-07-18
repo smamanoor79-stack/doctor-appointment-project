@@ -150,15 +150,15 @@ function ModalField({ label, children }) {
 
 function Modal({ title, onClose, children }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(14,21,18,0.45)" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ background: "rgba(14,21,18,0.45)" }}>
       <div className="rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" style={{ background: token.card }}>
-        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: token.line }}>
-          <p className="font-display font-semibold text-lg" style={{ color: token.ink }}>{title}</p>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: token.cream }}>
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b" style={{ borderColor: token.line }}>
+          <p className="font-display font-semibold text-base sm:text-lg" style={{ color: token.ink }}>{title}</p>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: token.cream }}>
             <XIcon size={16} style={{ color: token.ink }} />
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </div>
     </div>
   );
@@ -334,28 +334,28 @@ export default function AppointmentsPage() {
   const activeCount = useMemo(() => bookings.filter((b) => !b.archived).length, [bookings]);
 
   return (
-    <main className="px-6 md:px-10 py-7 max-w-[1400px]" style={{ color: token.ink }}>
+    <main className="px-3 sm:px-6 md:px-10 py-5 sm:py-7 max-w-[1400px] w-full min-w-0 overflow-x-hidden" style={{ color: token.ink }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="font-display font-semibold text-2xl md:text-[28px]" style={{ color: token.ink }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6">
+        <div className="min-w-0">
+          <h1 className="font-display font-semibold text-xl sm:text-2xl md:text-[28px] break-words" style={{ color: token.ink }}>
             Appointments
           </h1>
-          <p className="text-sm mt-1" style={{ color: token.inkSoft }}>
+          <p className="text-xs sm:text-sm mt-1" style={{ color: token.inkSoft }}>
             {filtered.length} of {view === "archived" ? archivedCount : activeCount} bookings shown
           </p>
         </div>
-        <div className="flex items-center gap-3 self-start sm:self-auto">
+        <div className="flex items-center gap-2 sm:gap-3 self-start sm:self-auto">
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-xl"
+            className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl whitespace-nowrap"
             style={{ background: token.forest, color: token.card }}
           >
             <Plus size={15} /> New appointment
           </button>
           <button
             onClick={loadBookings}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shrink-0"
             style={{ borderColor: token.line, background: token.card }}
           >
             <RefreshCw size={16} style={{ color: token.ink }} className={loading ? "animate-spin" : ""} />
@@ -364,10 +364,10 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Active / Archived tabs */}
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
         <button
           onClick={() => setView("active")}
-          className="text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+          className="text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-colors"
           style={
             view === "active"
               ? { background: token.forest, color: token.card }
@@ -378,7 +378,7 @@ export default function AppointmentsPage() {
         </button>
         <button
           onClick={() => setView("archived")}
-          className="text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+          className="text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-colors"
           style={
             view === "archived"
               ? { background: token.forest, color: token.card }
@@ -390,21 +390,21 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Filters bar */}
-      <div className="rounded-2xl p-4 mb-6 border flex flex-col md:flex-row gap-3" style={{ background: token.card, borderColor: token.line }}>
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl border flex-1" style={{ borderColor: token.line }}>
-          <Search size={15} style={{ color: token.inkSoft }} />
+      <div className="rounded-2xl p-3 sm:p-4 mb-6 border flex flex-col md:flex-row gap-3" style={{ background: token.card, borderColor: token.line }}>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl border flex-1 min-w-0" style={{ borderColor: token.line }}>
+          <Search size={15} style={{ color: token.inkSoft }} className="shrink-0" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email, phone, or booking #"
-            className="text-sm outline-none bg-transparent w-full"
+            className="text-sm outline-none bg-transparent w-full min-w-0"
             style={{ color: token.ink }}
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="text-sm rounded-xl border px-3 py-2 outline-none"
+          className="text-sm rounded-xl border px-3 py-2 outline-none w-full md:w-auto"
           style={{ borderColor: token.line, color: token.ink, background: token.card }}
         >
           {STATUS_FILTERS.map((s) => (
@@ -414,7 +414,7 @@ export default function AppointmentsPage() {
         <select
           value={serviceFilter}
           onChange={(e) => setServiceFilter(e.target.value)}
-          className="text-sm rounded-xl border px-3 py-2 outline-none"
+          className="text-sm rounded-xl border px-3 py-2 outline-none w-full md:w-auto"
           style={{ borderColor: token.line, color: token.ink, background: token.card }}
         >
           {SERVICE_FILTERS.map((s) => (
@@ -429,132 +429,134 @@ export default function AppointmentsPage() {
         </div>
       )}
 
-      {/* Table */}
-      <div className="rounded-2xl border overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
-        <table className="w-full text-sm">
-          <thead>
-            <tr style={{ color: token.inkSoft }} className="text-xs uppercase tracking-wide font-semibold">
-              <td className="px-5 py-3 w-10">Done</td>
-              <td className="px-5 py-3">Patient</td>
-              <td className="px-5 py-3">Service</td>
-              <td className="px-5 py-3">Type</td>
-              <td className="px-5 py-3">Time</td>
-              <td className="px-5 py-3">Status</td>
-              <td className="px-5 py-3">Payment</td>
-              <td className="px-5 py-3">Actions</td>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8} className="px-5 py-8 text-center text-sm" style={{ color: token.inkSoft }}>
-                  {loading ? "Loading bookings…" : "No bookings match these filters."}
-                </td>
+      <div className="rounded-2xl border overflow-x-hidden" style={{ background: token.card, borderColor: token.line }}>
+        <p className="sm:hidden text-[11px] px-4 pt-3" style={{ color: token.inkSoft }}>← swipe to see more →</p>
+        <div className="overflow-x-auto pb-1">
+          <table className="w-full text-sm min-w-[900px]">
+            <thead>
+              <tr style={{ color: token.inkSoft }} className="text-xs uppercase tracking-wide font-semibold">
+                <td className="px-5 py-3 w-10">Done</td>
+                <td className="px-5 py-3">Patient</td>
+                <td className="px-5 py-3">Service</td>
+                <td className="px-5 py-3">Type</td>
+                <td className="px-5 py-3">Time</td>
+                <td className="px-5 py-3">Status</td>
+                <td className="px-5 py-3">Payment</td>
+                <td className="px-5 py-3">Actions</td>
               </tr>
-            )}
-            {filtered.map((b) => {
-              const busy = actingId === b._id;
-              const isCompleted = b.status === "completed";
-              const canToggle = b.status === "confirmed" || b.status === "completed";
-              return (
-                <tr
-                  key={b._id}
-                  style={{
-                    borderTop: `1px solid ${token.line}`,
-                    background: isCompleted ? "#E7F2E9" : "transparent",
-                    transition: "background 0.2s ease",
-                  }}
-                >
-                  <td className="px-5 py-3">
-                    {canToggle ? (
-                      <input
-                        type="checkbox"
-                        checked={isCompleted}
-                        disabled={busy}
-                        onChange={() =>
-                          handleAction(b._id, isCompleted ? "uncomplete" : "complete")
-                        }
-                        className="w-4 h-4 rounded cursor-pointer"
-                        style={{ accentColor: token.sageDeep }}
-                        title={isCompleted ? "Completed — click to undo" : "Mark appointment as done"}
-                      />
-                    ) : null}
+            </thead>
+            <tbody>
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-5 py-8 text-center text-sm" style={{ color: token.inkSoft }}>
+                    {loading ? "Loading bookings…" : "No bookings match these filters."}
                   </td>
-                  <td className="px-5 py-3">
-                    <p className="font-medium">{b.name}</p>
-                    <p className="text-[11px] font-mono-data" style={{ color: token.inkSoft }}>{b.bookingNumber}</p>
-                  </td>
-                  <td className="px-5 py-3"><ServiceTag service={b.service} /></td>
-                  <td className="px-5 py-3"><TypeTag type={b.appointmentType} /></td>
-                  <td className="px-5 py-3 font-mono-data text-xs" style={{ color: token.inkSoft }}>
-                    {b.dateLabel || b.date}, {b.timeSlot}
-                  </td>
-                  <td className="px-5 py-3"><StatusPill status={b.status} /></td>
-                  <td className="px-5 py-3">
-                    <div className="flex flex-col gap-1 items-start">
-                      <PaymentDropdown
-                        value={b.paymentStatus}
-                        disabled={busy}
-                        onChange={(val) => handlePaymentChange(b._id, val)}
-                      />
-                      {b.transactionRef && (
-                        <span className="font-mono-data text-[10px]" style={{ color: token.inkSoft }}>
-                          Ref: {b.transactionRef}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        disabled={busy}
-                        onClick={() => openEdit(b)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ background: token.tealSoft, color: token.teal }}
-                        title="Edit appointment"
-                      >
-                        <Pencil size={13} />
-                      </button>
-
-                      {view === "active" ? (
+                </tr>
+              )}
+              {filtered.map((b) => {
+                const busy = actingId === b._id;
+                const isCompleted = b.status === "completed";
+                const canToggle = b.status === "confirmed" || b.status === "completed";
+                return (
+                  <tr
+                    key={b._id}
+                    style={{
+                      borderTop: `1px solid ${token.line}`,
+                      background: isCompleted ? "#E7F2E9" : "transparent",
+                      transition: "background 0.2s ease",
+                    }}
+                  >
+                    <td className="px-5 py-3">
+                      {canToggle ? (
+                        <input
+                          type="checkbox"
+                          checked={isCompleted}
+                          disabled={busy}
+                          onChange={() =>
+                            handleAction(b._id, isCompleted ? "uncomplete" : "complete")
+                          }
+                          className="w-4 h-4 rounded cursor-pointer"
+                          style={{ accentColor: token.sageDeep }}
+                          title={isCompleted ? "Completed — click to undo" : "Mark appointment as done"}
+                        />
+                      ) : null}
+                    </td>
+                    <td className="px-5 py-3">
+                      <p className="font-medium">{b.name}</p>
+                      <p className="text-[11px] font-mono-data" style={{ color: token.inkSoft }}>{b.bookingNumber}</p>
+                    </td>
+                    <td className="px-5 py-3"><ServiceTag service={b.service} /></td>
+                    <td className="px-5 py-3"><TypeTag type={b.appointmentType} /></td>
+                    <td className="px-5 py-3 font-mono-data text-xs" style={{ color: token.inkSoft }}>
+                      {b.dateLabel || b.date}, {b.timeSlot}
+                    </td>
+                    <td className="px-5 py-3"><StatusPill status={b.status} /></td>
+                    <td className="px-5 py-3">
+                      <div className="flex flex-col gap-1 items-start">
+                        <PaymentDropdown
+                          value={b.paymentStatus}
+                          disabled={busy}
+                          onChange={(val) => handlePaymentChange(b._id, val)}
+                        />
+                        {b.transactionRef && (
+                          <span className="font-mono-data text-[10px]" style={{ color: token.inkSoft }}>
+                            Ref: {b.transactionRef}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-1.5">
                         <button
                           disabled={busy}
-                          onClick={() => handleDelete(b._id, b.name)}
+                          onClick={() => openEdit(b)}
                           className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: token.rose, color: token.roseDeep }}
-                          title="Delete appointment"
+                          style={{ background: token.tealSoft, color: token.teal }}
+                          title="Edit appointment"
                         >
-                          <Trash2 size={13} />
+                          <Pencil size={13} />
                         </button>
-                      ) : (
-                        <>
-                          <button
-                            disabled={busy}
-                            onClick={() => handleRestore(b._id)}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: token.sage, color: token.sageDeep }}
-                            title="Restore appointment"
-                          >
-                            <ArchiveRestore size={13} />
-                          </button>
+
+                        {view === "active" ? (
                           <button
                             disabled={busy}
                             onClick={() => handleDelete(b._id, b.name)}
                             className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
                             style={{ background: token.rose, color: token.roseDeep }}
-                            title="Permanently delete appointment"
+                            title="Delete appointment"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={13} />
                           </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        ) : (
+                          <>
+                            <button
+                              disabled={busy}
+                              onClick={() => handleRestore(b._id)}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                              style={{ background: token.sage, color: token.sageDeep }}
+                              title="Restore appointment"
+                            >
+                              <ArchiveRestore size={13} />
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => handleDelete(b._id, b.name)}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                              style={{ background: token.rose, color: token.roseDeep }}
+                              title="Permanently delete appointment"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* New Appointment Modal */}
@@ -569,7 +571,7 @@ export default function AppointmentsPage() {
                 onChange={(e) => setAddForm((f) => ({ ...f, name: e.target.value }))}
               />
             </ModalField>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Phone">
                 <input
                   className="w-full text-sm rounded-xl border px-3.5 py-2.5 outline-none"
@@ -587,7 +589,7 @@ export default function AppointmentsPage() {
                 />
               </ModalField>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Service">
                 <select
                   className="w-full text-sm rounded-xl border px-3.5 py-2.5 outline-none"
@@ -609,7 +611,7 @@ export default function AppointmentsPage() {
                 </select>
               </ModalField>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Date">
                 <input
                   type="date"
@@ -664,7 +666,7 @@ export default function AppointmentsPage() {
                 onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
               />
             </ModalField>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Phone">
                 <input
                   className="w-full text-sm rounded-xl border px-3.5 py-2.5 outline-none"
@@ -682,7 +684,7 @@ export default function AppointmentsPage() {
                 />
               </ModalField>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Service">
                 <select
                   className="w-full text-sm rounded-xl border px-3.5 py-2.5 outline-none"
@@ -704,7 +706,7 @@ export default function AppointmentsPage() {
                 </select>
               </ModalField>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <ModalField label="Date">
                 <input
                   type="date"

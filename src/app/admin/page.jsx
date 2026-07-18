@@ -180,18 +180,6 @@ export default function DermaDashboard() {
   // Ref for the Today's Queue horizontal scroll container (slider mode)
   const queueScrollRef = useRef(null);
 
-  // --- HYDRATION FIX ---
-  // getGreeting() and the date string both depend on `new Date()`, which is
-  // evaluated once on the server (Vercel, UTC) and once on the client
-  // (the visitor's local timezone). Those two clocks can disagree, so
-  // rendering them directly in the component body causes a server/client
-  // mismatch (React hydration error #418) whenever the UTC hour and the
-  // visitor's local hour fall on opposite sides of the morning/afternoon/
-  // evening boundaries.
-  //
-  // Fix: render a neutral placeholder on the very first pass (identical on
-  // server and client), then fill in the real, timezone-correct values in
-  // useEffect, which only ever runs in the browser after hydration.
   const [greeting, setGreeting] = useState("Welcome");
   const [dateLabel, setDateLabel] = useState("");
 
@@ -201,8 +189,7 @@ export default function DermaDashboard() {
       new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long" })
     );
   }, []);
-  // --- END HYDRATION FIX ---
-
+  
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(LAST_SEEN_KEY) : null;
     setLastSeenAt(stored || new Date().toISOString());
@@ -287,9 +274,6 @@ export default function DermaDashboard() {
     if (typeof window !== "undefined") localStorage.setItem(LAST_SEEN_KEY, now);
   }
 
-  // All of today's bookings (used for the "Today's Appointments" KPI count —
-  // this should NOT shrink as appointments get marked done, it's a count of
-  // everything scheduled today).
   const todaysBookings = useMemo(
     () =>
       bookings
@@ -298,16 +282,11 @@ export default function DermaDashboard() {
     [bookings, today]
   );
 
-  // Just the still-pending items for the visual queue strip — once a
-  // patient is marked done (completed), they drop out of this list and
-  // disappear from Today's Queue automatically.
   const todaysQueue = useMemo(
     () => todaysBookings.filter((b) => b.status !== "completed"),
     [todaysBookings]
   );
 
-  // Show arrow controls once the queue is crowded past the threshold.
-  // (The strip itself is always scrollable regardless of this flag.)
   const showQueueArrows = todaysQueue.length > QUEUE_SLIDER_THRESHOLD;
 
   const pendingPayments = useMemo(
@@ -373,30 +352,30 @@ export default function DermaDashboard() {
   );
 
   return (
-    <main className="px-4 sm:px-6 md:px-10 py-7 max-w-350 min-w-0 w-full" style={{ color: token.ink }}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="font-display font-semibold text-2xl md:text-[28px]" style={{ color: token.ink }}>
+    <main className="px-3 sm:px-6 md:px-10 py-5 sm:py-7 max-w-350 min-w-0 w-full overflow-x-hidden" style={{ color: token.ink }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <h1 className="font-display font-semibold text-xl sm:text-2xl md:text-[28px] break-words" style={{ color: token.ink }}>
             {greeting}, <span style={{ fontStyle: "italic", color: token.coral }}>Dr. Malik</span>
           </h1>
-          <p className="text-sm mt-1" style={{ color: token.inkSoft }}>
+          <p className="text-xs sm:text-sm mt-1" style={{ color: token.inkSoft }}>
             {dateLabel} — here's how the clinic looks today.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border" style={{ borderColor: token.line, background: token.card }}>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl border" style={{ borderColor: token.line, background: token.card }}>
             <Search size={15} style={{ color: token.inkSoft }} />
             <input placeholder="Search patients, bookings…" className="text-sm outline-none bg-transparent w-40 md:w-56" style={{ color: token.ink }} />
           </div>
-          <button onClick={loadBookings} className="w-10 h-10 rounded-xl flex items-center justify-center border shrink-0" style={{ borderColor: token.line, background: token.card }}>
+          <button onClick={loadBookings} className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shrink-0" style={{ borderColor: token.line, background: token.card }}>
             <RefreshCw size={16} style={{ color: token.ink }} className={loading ? "animate-spin" : ""} />
           </button>
 
           <div className="relative" ref={notifRef}>
             <button
               onClick={handleBellClick}
-              className="w-10 h-10 rounded-xl flex items-center justify-center border relative shrink-0"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border relative shrink-0"
               style={{ borderColor: token.line, background: token.card }}
             >
               <Bell size={16} style={{ color: token.ink }} />
@@ -412,7 +391,7 @@ export default function DermaDashboard() {
 
             {showNotifDropdown && (
               <div
-                className="absolute right-0 mt-2 w-80 max-w-[90vw] rounded-2xl border shadow-lg z-20 overflow-hidden"
+                className="absolute right-0 mt-2 w-[90vw] sm:w-80 max-w-[90vw] rounded-2xl border shadow-lg z-20 overflow-hidden"
                 style={{ background: token.card, borderColor: token.line }}
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: token.line }}>
@@ -455,26 +434,20 @@ export default function DermaDashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-2xl p-5 border" style={{ background: token.card, borderColor: token.line }}>
-            <p className="text-xs uppercase tracking-wide font-semibold" style={{ color: token.inkSoft }}>{k.label}</p>
-            <p className="font-display font-semibold text-[28px] mt-2" style={{ color: token.ink }}>{loading ? "—" : k.value}</p>
-            <span className="text-xs" style={{ color: token.inkSoft }}>{k.sub}</span>
+          <div key={k.label} className="rounded-2xl p-3 sm:p-5 border min-w-0" style={{ background: token.card, borderColor: token.line }}>
+            <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold break-words" style={{ color: token.inkSoft }}>{k.label}</p>
+            <p className="font-display font-semibold text-xl sm:text-[28px] mt-1 sm:mt-2 truncate" style={{ color: token.ink }}>{loading ? "—" : k.value}</p>
+            <span className="text-[10px] sm:text-xs" style={{ color: token.inkSoft }}>{k.sub}</span>
           </div>
         ))}
       </div>
 
-      {/* Today's Queue — ALWAYS horizontally scrollable inside its own box
-          (overflow-x-auto), never dependent on item count. This guarantees
-          the scroll is fully contained here and can never push/scroll the
-          whole page. Items use fixed shrink-0 widths (no flex-grow) so the
-          row's total width is deterministic and the container reliably
-          shows its own scrollbar instead of overflowing its parent. */}
-      <div className="rounded-2xl p-5 mb-6 border min-w-0 w-full overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
-        <div className="flex items-center justify-between mb-4">
-          <p className="font-display font-semibold text-lg" style={{ color: token.ink }}>Today's Queue</p>
-          <span className="text-xs" style={{ color: token.inkSoft }}>{todaysQueue.length} in queue</span>
+      <div className="rounded-2xl p-3 sm:p-5 mb-6 border min-w-0 w-full overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
+        <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+          <p className="font-display font-semibold text-base sm:text-lg" style={{ color: token.ink }}>Today's Queue</p>
+          <span className="text-[11px] sm:text-xs shrink-0" style={{ color: token.inkSoft }}>{todaysQueue.length} in queue</span>
         </div>
         {todaysBookings.length === 0 ? (
           <p className="text-sm" style={{ color: token.inkSoft }}>
@@ -489,7 +462,7 @@ export default function DermaDashboard() {
             {showQueueArrows && (
               <button
                 onClick={() => scrollQueueBy(-280)}
-                className="flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full items-center justify-center border shadow-md"
+                className="flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full items-center justify-center border shadow-md"
                 style={{ background: token.card, borderColor: token.line }}
               >
                 <ChevronLeft size={16} style={{ color: token.ink }} />
@@ -513,7 +486,7 @@ export default function DermaDashboard() {
                 const isDone = b.status === "completed";
                 return (
                   <React.Fragment key={b._id}>
-                    <div className="flex flex-col items-center gap-2 px-2 shrink-0" style={{ width: 110 }}>
+                    <div className="flex flex-col items-center gap-2 px-2 shrink-0 w-[88px] sm:w-[110px]">
                       <span className="font-mono-data text-[11px]" style={{ color: token.inkSoft }}>{b.timeSlot}</span>
 
                       <button
@@ -541,7 +514,7 @@ export default function DermaDashboard() {
             {showQueueArrows && (
               <button
                 onClick={() => scrollQueueBy(280)}
-                className="flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full items-center justify-center border shadow-md"
+                className="flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full items-center justify-center border shadow-md"
                 style={{ background: token.card, borderColor: token.line }}
               >
                 <ChevronRight size={16} style={{ color: token.ink }} />
@@ -551,12 +524,13 @@ export default function DermaDashboard() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 rounded-2xl border overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
-          <div className="flex items-center justify-between px-5 pt-5 pb-3">
-            <p className="font-display font-semibold text-lg" style={{ color: token.ink }}>Upcoming Appointments</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="lg:col-span-2 rounded-2xl border overflow-x-hidden" style={{ background: token.card, borderColor: token.line }}>
+          <div className="flex items-center justify-between px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+            <p className="font-display font-semibold text-base sm:text-lg" style={{ color: token.ink }}>Upcoming Appointments</p>
           </div>
-          <div className="overflow-x-auto">
+          <p className="sm:hidden text-[11px] px-4 pb-2" style={{ color: token.inkSoft }}>← swipe to see more →</p>
+          <div className="overflow-x-auto pb-2">
             <table className="w-full text-sm min-w-[640px]">
               <thead>
                 <tr style={{ color: token.inkSoft }} className="text-xs uppercase tracking-wide font-semibold">
@@ -606,9 +580,9 @@ export default function DermaDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <div className="rounded-2xl p-5 border" style={{ background: token.card, borderColor: token.line }}>
-            <p className="font-display font-semibold text-lg mb-1" style={{ color: token.ink }}>Revenue — Last 7 Days</p>
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <div className="rounded-2xl p-4 sm:p-5 border" style={{ background: token.card, borderColor: token.line }}>
+            <p className="font-display font-semibold text-base sm:text-lg mb-1" style={{ color: token.ink }}>Revenue — Last 7 Days</p>
             <p className="text-xs mb-3" style={{ color: token.inkSoft }}>
               Total Rs. {revenueTrend.reduce((s, d) => s + d.revenue, 0).toLocaleString()}
             </p>
@@ -631,8 +605,8 @@ export default function DermaDashboard() {
             </div>
           </div>
 
-          <div className="rounded-2xl p-5 border flex-1" style={{ background: token.card, borderColor: token.line }}>
-            <p className="font-display font-semibold text-lg mb-3" style={{ color: token.ink }}>Recent Activity</p>
+          <div className="rounded-2xl p-4 sm:p-5 border flex-1" style={{ background: token.card, borderColor: token.line }}>
+            <p className="font-display font-semibold text-base sm:text-lg mb-3" style={{ color: token.ink }}>Recent Activity</p>
             {activity.length === 0 ? (
               <p className="text-sm" style={{ color: token.inkSoft }}>{loading ? "Loading…" : "No activity yet."}</p>
             ) : (
