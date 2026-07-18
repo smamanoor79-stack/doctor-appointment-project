@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const DEFAULT_TITLE = "Your Skin, Our Priority";
+const DEFAULT_TITLE = " Your Skin, Our Priority 🧴";
 const DEFAULT_DESCRIPTION =
   "Expert dermatological care for all skin, hair, and nail concerns. Book a consultation with Dr. Ahsan Malik for acne, anti-aging, cosmetic, and laser treatments.";
 

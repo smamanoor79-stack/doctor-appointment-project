@@ -180,6 +180,29 @@ export default function DermaDashboard() {
   // Ref for the Today's Queue horizontal scroll container (slider mode)
   const queueScrollRef = useRef(null);
 
+  // --- HYDRATION FIX ---
+  // getGreeting() and the date string both depend on `new Date()`, which is
+  // evaluated once on the server (Vercel, UTC) and once on the client
+  // (the visitor's local timezone). Those two clocks can disagree, so
+  // rendering them directly in the component body causes a server/client
+  // mismatch (React hydration error #418) whenever the UTC hour and the
+  // visitor's local hour fall on opposite sides of the morning/afternoon/
+  // evening boundaries.
+  //
+  // Fix: render a neutral placeholder on the very first pass (identical on
+  // server and client), then fill in the real, timezone-correct values in
+  // useEffect, which only ever runs in the browser after hydration.
+  const [greeting, setGreeting] = useState("Welcome");
+  const [dateLabel, setDateLabel] = useState("");
+
+  useEffect(() => {
+    setGreeting(getGreeting());
+    setDateLabel(
+      new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long" })
+    );
+  }, []);
+  // --- END HYDRATION FIX ---
+
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(LAST_SEEN_KEY) : null;
     setLastSeenAt(stored || new Date().toISOString());
@@ -354,10 +377,10 @@ export default function DermaDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="font-display font-semibold text-2xl md:text-[28px]" style={{ color: token.ink }}>
-            {getGreeting()}, <span style={{ fontStyle: "italic", color: token.coral }}>Dr. Malik</span>
+            {greeting}, <span style={{ fontStyle: "italic", color: token.coral }}>Dr. Malik</span>
           </h1>
           <p className="text-sm mt-1" style={{ color: token.inkSoft }}>
-            {new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long" })} — here's how the clinic looks today.
+            {dateLabel} — here's how the clinic looks today.
           </p>
         </div>
 
