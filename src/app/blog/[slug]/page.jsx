@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }) {
             skin.
           </p>
           <Link
-            href="/#book"
+            href="/book"
             className="inline-flex items-center bg-accent hover:bg-accentDark text-white font-bold px-6 py-3 rounded-full text-sm transition-colors"
           >
             Book Appointment
