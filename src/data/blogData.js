@@ -6,7 +6,7 @@ export const blogPosts = [
     title: "Acne Treatment: What Actually Works",
     excerpt:
       "Breaking down the real causes of acne and deep scarring, and the clinical treatments that consistently deliver results.",
-    img: "/service1.jpg",
+    img: "/service1.webp",
     icon: "🩺",
     category: "Acne Treatment",
     date: "June 18, 2026",
@@ -32,7 +32,7 @@ export const blogPosts = [
     title: "Anti-Aging Care: Restoring Collagen the Right Way",
     excerpt:
       "A look at how modern anti-aging therapies rebuild collagen and restore youthful skin without unnecessary downtime.",
-    img: "/service2.jpg",
+    img: "/service2.webp",
     icon: "✨",
     category: "Anti Aging Care",
     date: "June 22, 2026",
@@ -58,7 +58,7 @@ export const blogPosts = [
     title: "Cosmetic Procedures: Peels, Hydrafacials, and What's Right for You",
     excerpt:
       "Chemical peels and hydrafacials are often confused. Here's how each one works and which skin concerns they're best suited for.",
-    img: "/service3.jpg",
+    img: "/service3.webp",
     icon: "⚡",
     category: "Cosmetic Procedure",
     date: "June 27, 2026",
@@ -84,7 +84,7 @@ export const blogPosts = [
     title: "Laser Therapy: Hair Reduction and Skin Resurfacing",
     excerpt:
       "How laser technology delivers long-term hair reduction and smoother skin, and what results you can realistically expect.",
-    img: "/service4.jpg",
+    img: "/service4.webp",
     icon: "💇‍♀️",
     category: "Laser Therapy",
     date: "July 2, 2026",
