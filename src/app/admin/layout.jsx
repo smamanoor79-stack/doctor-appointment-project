@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutGrid,
   CalendarDays,
@@ -35,11 +35,42 @@ const navItems = [
   { icon: FileText, label: "Settings", href: "/admin/settings" },
 ];
 
+const LAST_SEEN_KEY = "derma_last_seen_bookings_at";
+const POLL_INTERVAL_MS = 30000;
+
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [newAppointmentsCount, setNewAppointmentsCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadUnseenCount() {
+      try {
+        const stored = typeof window !== "undefined" ? localStorage.getItem(LAST_SEEN_KEY) : null;
+        const lastSeen = stored ? new Date(stored) : new Date(0);
+        const res = await fetch("/api/bookings");
+        const data = await res.json();
+        if (cancelled || !data.success) return;
+        const count = (data.bookings || []).filter(
+          (b) => !b.archived && b.createdAt && new Date(b.createdAt) > lastSeen
+        ).length;
+        if (!cancelled) setNewAppointmentsCount(count);
+      } catch {
+        // Silent fail — badge just skips this refresh cycle.
+      }
+    }
+
+    loadUnseenCount();
+    const interval = setInterval(loadUnseenCount, POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [pathname]);
 
   if (pathname === "/admin/login") {
     return <>{children}</>;
@@ -79,6 +110,7 @@ export default function AdminLayout({ children }) {
         <nav className="flex flex-col gap-1">
           {navItems.map(({ icon: Icon, label, href }) => {
             const isActive = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+            const showBadge = href === "/admin/appointments" && newAppointmentsCount > 0;
             return (
               <Link
                 key={label}
@@ -92,7 +124,18 @@ export default function AdminLayout({ children }) {
                 }}
               >
                 <Icon size={17} strokeWidth={2} />
-                {label}
+                <span className="flex-1">{label}</span>
+                {showBadge && (
+                  <span
+                    className="text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shrink-0"
+                    style={{
+                      background: isActive ? token.forest : token.coral,
+                      color: isActive ? token.coral : token.forest,
+                    }}
+                  >
+                    {newAppointmentsCount > 9 ? "9+" : newAppointmentsCount}
+                  </span>
+                )}
               </Link>
             );
           })}

@@ -205,6 +205,10 @@ export default function BookAppointment() {
     const [content, setContent] = useState(null);
     const [loadingContent, setLoadingContent] = useState(true);
 
+    // NEW: holds the list of time slots already taken for the currently
+    // selected date (only counts confirmed / payment-verified bookings).
+    const [bookedSlots, setBookedSlots] = useState([]);
+
     useEffect(() => {
         let cancelled = false;
         async function loadContent() {
@@ -246,6 +250,31 @@ export default function BookAppointment() {
     });
 
     const update = (field, value) => setForm((f) => ({ ...f, [field]: value }));
+
+    // NEW: whenever the selected date changes, fetch which slots are
+    // already booked (confirmed / payment-verified) for that date.
+    useEffect(() => {
+        if (!form.date) {
+            setBookedSlots([]);
+            return;
+        }
+        let cancelled = false;
+        async function loadAvailability() {
+            try {
+                const res = await fetch(`/api/bookings/availability?date=${form.date}`, {
+                    cache: "no-store",
+                });
+                const data = await res.json();
+                if (!cancelled && data.success) setBookedSlots(data.bookedSlots || []);
+            } catch (err) {
+                console.error("Failed to load slot availability:", err);
+            }
+        }
+        loadAvailability();
+        return () => {
+            cancelled = true;
+        };
+    }, [form.date]);
 
     const paymentInstructions = buildPaymentInstructions(content);
     const whatsappNumber = content?.whatsapp || content?.phone || PAYMENT_FALLBACK.whatsapp;
@@ -740,20 +769,28 @@ export default function BookAppointment() {
                                                         <p className="text-sm font-semibold text-dark/70" id={`${period}-slots-heading`}>{period}</p>
                                                     </div>
                                                     <div className="grid grid-cols-3 gap-2" role="group" aria-labelledby={`${period}-slots-heading`}>
-                                                        {slots.map((slot) => (
-                                                            <button
-                                                                key={slot}
-                                                                type="button"
-                                                                onClick={() => update("timeSlot", slot)}
-                                                                aria-pressed={form.timeSlot === slot}
-                                                                className={`px-2 py-2 rounded-xl text-xs font-semibold border transition-all ${form.timeSlot === slot
-                                                                    ? "bg-primaryLight text-white border-primaryLight shadow-md shadow-primaryLight/30"
-                                                                    : "bg-white text-dark border-primary/10 hover:border-primaryLight/40 hover:text-primaryLight"
-                                                                    }`}
-                                                            >
-                                                                {slot}
-                                                            </button>
-                                                        ))}
+                                                        {slots.map((slot) => {
+                                                            const isBooked = bookedSlots.includes(slot);
+                                                            return (
+                                                                <button
+                                                                    key={slot}
+                                                                    type="button"
+                                                                    disabled={isBooked}
+                                                                    onClick={() => update("timeSlot", slot)}
+                                                                    aria-pressed={form.timeSlot === slot}
+                                                                    aria-disabled={isBooked}
+                                                                    title={isBooked ? "This slot is already booked" : undefined}
+                                                                    className={`px-2 py-2 rounded-xl text-xs font-semibold border transition-all ${isBooked
+                                                                        ? "bg-dark/5 text-dark/30 border-dark/5 cursor-not-allowed line-through"
+                                                                        : form.timeSlot === slot
+                                                                            ? "bg-primaryLight text-white border-primaryLight shadow-md shadow-primaryLight/30"
+                                                                            : "bg-white text-dark border-primary/10 hover:border-primaryLight/40 hover:text-primaryLight"
+                                                                        }`}
+                                                                >
+                                                                    {slot}
+                                                                </button>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
                                             );

@@ -282,8 +282,13 @@ export default function DermaDashboard() {
     [bookings, today]
   );
 
-  const todaysQueue = useMemo(
-    () => todaysBookings.filter((b) => b.status !== "completed"),
+  // Keep ALL of today's bookings visible in the queue (completed ones stay
+  // put, they just get a light-green highlight) instead of disappearing
+  // once marked done.
+  const todaysQueue = todaysBookings;
+
+  const pendingInQueue = useMemo(
+    () => todaysBookings.filter((b) => b.status !== "completed").length,
     [todaysBookings]
   );
 
@@ -447,15 +452,11 @@ export default function DermaDashboard() {
       <div className="rounded-2xl p-3 sm:p-5 mb-6 border min-w-0 w-full overflow-hidden" style={{ background: token.card, borderColor: token.line }}>
         <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
           <p className="font-display font-semibold text-base sm:text-lg" style={{ color: token.ink }}>Today's Queue</p>
-          <span className="text-[11px] sm:text-xs shrink-0" style={{ color: token.inkSoft }}>{todaysQueue.length} in queue</span>
+          <span className="text-[11px] sm:text-xs shrink-0" style={{ color: token.inkSoft }}>{pendingInQueue} pending</span>
         </div>
         {todaysBookings.length === 0 ? (
           <p className="text-sm" style={{ color: token.inkSoft }}>
             {loading ? "Loading…" : "No appointments booked for today yet."}
-          </p>
-        ) : todaysQueue.length === 0 ? (
-          <p className="text-sm" style={{ color: token.inkSoft }}>
-            All of today's appointments are marked done. 🎉
           </p>
         ) : (
           <div className="relative min-w-0 w-full">
@@ -486,7 +487,12 @@ export default function DermaDashboard() {
                 const isDone = b.status === "completed";
                 return (
                   <React.Fragment key={b._id}>
-                    <div className="flex flex-col items-center gap-2 px-2 shrink-0 w-[88px] sm:w-[110px]">
+                    <div
+                      className="flex flex-col items-center gap-2 px-2 py-2 shrink-0 w-[88px] sm:w-[110px] rounded-xl transition-colors"
+                      style={{
+                        background: isDone ? token.sage : "transparent",
+                      }}
+                    >
                       <span className="font-mono-data text-[11px]" style={{ color: token.inkSoft }}>{b.timeSlot}</span>
 
                       <button
@@ -499,7 +505,12 @@ export default function DermaDashboard() {
                         }}
                         title={isDone ? "Mark as not done" : "Mark as done"}
                       />
-                      <p className="text-xs font-medium text-center leading-tight" style={{ color: token.ink }}>{b.name.split(" ")[0]}</p>
+                      <p
+                        className="text-xs font-medium text-center leading-tight"
+                        style={{ color: isDone ? token.sageDeep : token.ink }}
+                      >
+                        {b.name.split(" ")[0]}
+                      </p>
                       <ServiceTag service={b.service} />
                       <TypeTag type={b.appointmentType} />
                     </div>

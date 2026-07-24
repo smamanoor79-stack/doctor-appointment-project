@@ -18,9 +18,6 @@ const DEFAULT_TITLE = " Your Skin, Our Priority 🧴";
 const DEFAULT_DESCRIPTION =
   "Expert dermatological care for all skin, hair, and nail concerns. Book a consultation with Dr. Ahsan Malik for acne, anti-aging, cosmetic, and laser treatments.";
 
-// Runs on the server at request/build time — safe to hit the DB directly here,
-// this file is never bundled into the client (only `children` is handed to
-// ConditionalLayout, which doesn't pull layout.js itself into its client bundle).
 
 export async function generateMetadata() {
   try {

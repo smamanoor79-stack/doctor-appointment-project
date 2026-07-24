@@ -50,12 +50,25 @@ const PAYMENT_OPTIONS = [
   { value: "rejected", label: "Rejected" },
 ];
 
+const LAST_SEEN_KEY = "derma_last_seen_bookings_at";
+
 function serviceKey(name = "") {
   if (name.startsWith("Acne")) return "Acne";
   if (name.startsWith("Anti")) return "Anti Aging";
   if (name.startsWith("Cosmetic")) return "Cosmetic";
   if (name.startsWith("Laser")) return "Laser";
   return "Other";
+}
+
+// An appointment is "missed" once its date/time has passed and nobody ever
+// marked it completed or cancelled. It isn't deleted or auto-changed — it
+// just moves into its own tab so the admin can follow up or clear it out.
+function isPastDue(b) {
+  if (!b || b.status === "completed" || b.status === "cancelled") return false;
+  if (!b.date) return false;
+  const dt = new Date(`${b.date} ${b.timeSlot || "11:59 PM"}`);
+  if (isNaN(dt.getTime())) return false;
+  return dt.getTime() < Date.now();
 }
 
 function StatusPill({ status }) {
@@ -69,6 +82,17 @@ function StatusPill({ status }) {
   return (
     <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ color: s.color, background: s.background }}>
       {s.label}
+    </span>
+  );
+}
+
+function MissedPill() {
+  return (
+    <span
+      className="text-xs font-medium px-2.5 py-1 rounded-full"
+      style={{ color: token.roseDeep, background: token.rose }}
+    >
+      Missed
     </span>
   );
 }
@@ -117,6 +141,17 @@ function TypeTag({ type }) {
     <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: token.inkSoft }}>
       <Icon size={13} />
       {type || "Clinic Visit"}
+    </span>
+  );
+}
+
+function NewTag() {
+  return (
+    <span
+      className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wide"
+      style={{ background: token.coral, color: token.card }}
+    >
+      New
     </span>
   );
 }
@@ -181,7 +216,7 @@ export default function AppointmentsPage() {
   const [error, setError] = useState("");
   const [actingId, setActingId] = useState(null);
 
-  const [view, setView] = useState("active"); // "active" | "archived"
+  const [view, setView] = useState("active"); // "active" | "missed" | "archived"
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [serviceFilter, setServiceFilter] = useState("All services");
@@ -192,6 +227,11 @@ export default function AppointmentsPage() {
 
   const [editBooking, setEditBooking] = useState(null);
   const [editForm, setEditForm] = useState(null);
+
+  // Snapshot of "last seen" taken once on mount — used only to figure out
+  // which rows are "new" for this visit. We don't overwrite it live, so the
+  // New tags don't vanish mid-session while she's still looking at them.
+  const [lastSeenAt, setLastSeenAt] = useState(null);
 
   async function loadBookings() {
     setLoading(true);
@@ -209,6 +249,18 @@ export default function AppointmentsPage() {
 
   useEffect(() => {
     loadBookings();
+  }, []);
+
+  useEffect(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(LAST_SEEN_KEY) : null;
+    setLastSeenAt(stored || new Date().toISOString());
+
+    const timeout = setTimeout(() => {
+      const now = new Date().toISOString();
+      if (typeof window !== "undefined") localStorage.setItem(LAST_SEEN_KEY, now);
+    }, 1500);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   async function handleAction(id, action, extra = {}) {
@@ -306,9 +358,20 @@ export default function AppointmentsPage() {
     setSaving(false);
   }
 
+  function isNew(b) {
+    return !!(lastSeenAt && b.createdAt && new Date(b.createdAt) > new Date(lastSeenAt));
+  }
+
   const filtered = useMemo(() => {
     return [...bookings]
-      .filter((b) => (view === "archived" ? !!b.archived : !b.archived))
+      .filter((b) => {
+        // Completed/archived bookings only ever show in the Completed tab.
+        if (b.archived) return view === "archived";
+        if (view === "archived") return false;
+
+        const missed = isPastDue(b);
+        return view === "missed" ? missed : !missed;
+      })
       .filter((b) => (statusFilter === "all" ? true : b.status === statusFilter))
       .filter((b) => (serviceFilter === "All services" ? true : serviceKey(b.service) === serviceFilter))
       .filter((b) => {
@@ -322,16 +385,36 @@ export default function AppointmentsPage() {
         );
       })
       .sort((a, b) => {
-        // Completed appointments always sink to the bottom, everything else sorted by date/time.
+        // 1) Completed appointments always sink to the bottom.
         const aDone = a.status === "completed" ? 1 : 0;
         const bDone = b.status === "completed" ? 1 : 0;
         if (aDone !== bDone) return aDone - bDone;
+
+        // 2) Among the rest, brand-new (unseen) bookings float to the top.
+        const aNew = isNew(a) ? 1 : 0;
+        const bNew = isNew(b) ? 1 : 0;
+        if (aNew !== bNew) return bNew - aNew;
+
+        // 3) Newest-created first among the new ones, so the very latest is on top.
+        if (aNew && bNew) return new Date(b.createdAt) - new Date(a.createdAt);
+
+        // 4) Everything else sorted by appointment date/time as before.
         return new Date(`${a.date} ${a.timeSlot}`) - new Date(`${b.date} ${b.timeSlot}`);
       });
-  }, [bookings, view, search, statusFilter, serviceFilter]);
+  }, [bookings, view, search, statusFilter, serviceFilter, lastSeenAt]);
 
   const archivedCount = useMemo(() => bookings.filter((b) => b.archived).length, [bookings]);
-  const activeCount = useMemo(() => bookings.filter((b) => !b.archived).length, [bookings]);
+  const missedCount = useMemo(
+    () => bookings.filter((b) => !b.archived && isPastDue(b)).length,
+    [bookings]
+  );
+  const activeCount = useMemo(
+    () => bookings.filter((b) => !b.archived && !isPastDue(b)).length,
+    [bookings]
+  );
+
+  const viewLabel = view === "archived" ? "Completed" : view === "missed" ? "Missed" : "Active";
+  const viewCount = view === "archived" ? archivedCount : view === "missed" ? missedCount : activeCount;
 
   return (
     <main className="px-3 sm:px-6 md:px-10 py-5 sm:py-7 max-w-[1400px] w-full min-w-0 overflow-x-hidden" style={{ color: token.ink }}>
@@ -342,7 +425,7 @@ export default function AppointmentsPage() {
             Appointments
           </h1>
           <p className="text-xs sm:text-sm mt-1" style={{ color: token.inkSoft }}>
-            {filtered.length} of {view === "archived" ? archivedCount : activeCount} bookings shown
+            {filtered.length} of {viewCount} bookings shown
           </p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 self-start sm:self-auto">
@@ -363,7 +446,7 @@ export default function AppointmentsPage() {
         </div>
       </div>
 
-      {/* Active / Archived tabs */}
+      {/* Active / Missed / Completed tabs */}
       <div className="flex items-center gap-2 mb-6 flex-wrap">
         <button
           onClick={() => setView("active")}
@@ -375,6 +458,17 @@ export default function AppointmentsPage() {
           }
         >
           Active ({activeCount})
+        </button>
+        <button
+          onClick={() => setView("missed")}
+          className="text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-colors"
+          style={
+            view === "missed"
+              ? { background: token.roseDeep, color: token.card }
+              : { background: token.card, color: token.inkSoft, border: `1px solid ${token.line}` }
+          }
+        >
+          Missed ({missedCount})
         </button>
         <button
           onClick={() => setView("archived")}
@@ -449,20 +543,22 @@ export default function AppointmentsPage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={8} className="px-5 py-8 text-center text-sm" style={{ color: token.inkSoft }}>
-                    {loading ? "Loading bookings…" : "No bookings match these filters."}
+                    {loading ? "Loading bookings…" : `No ${viewLabel.toLowerCase()} bookings match these filters.`}
                   </td>
                 </tr>
               )}
               {filtered.map((b) => {
                 const busy = actingId === b._id;
                 const isCompleted = b.status === "completed";
+                const missed = view === "missed" || isPastDue(b);
                 const canToggle = b.status === "confirmed" || b.status === "completed";
+                const newBooking = isNew(b);
                 return (
                   <tr
                     key={b._id}
                     style={{
                       borderTop: `1px solid ${token.line}`,
-                      background: isCompleted ? "#E7F2E9" : "transparent",
+                      background: newBooking ? token.coralSoft : "transparent",
                       transition: "background 0.2s ease",
                     }}
                   >
@@ -482,7 +578,10 @@ export default function AppointmentsPage() {
                       ) : null}
                     </td>
                     <td className="px-5 py-3">
-                      <p className="font-medium">{b.name}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium">{b.name}</p>
+                        {newBooking && <NewTag />}
+                      </div>
                       <p className="text-[11px] font-mono-data" style={{ color: token.inkSoft }}>{b.bookingNumber}</p>
                     </td>
                     <td className="px-5 py-3"><ServiceTag service={b.service} /></td>
@@ -490,7 +589,9 @@ export default function AppointmentsPage() {
                     <td className="px-5 py-3 font-mono-data text-xs" style={{ color: token.inkSoft }}>
                       {b.dateLabel || b.date}, {b.timeSlot}
                     </td>
-                    <td className="px-5 py-3"><StatusPill status={b.status} /></td>
+                    <td className="px-5 py-3">
+                      {missed ? <MissedPill /> : <StatusPill status={b.status} />}
+                    </td>
                     <td className="px-5 py-3">
                       <div className="flex flex-col gap-1 items-start">
                         <PaymentDropdown
@@ -517,17 +618,7 @@ export default function AppointmentsPage() {
                           <Pencil size={13} />
                         </button>
 
-                        {view === "active" ? (
-                          <button
-                            disabled={busy}
-                            onClick={() => handleDelete(b._id, b.name)}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: token.rose, color: token.roseDeep }}
-                            title="Delete appointment"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        ) : (
+                        {view === "archived" ? (
                           <>
                             <button
                               disabled={busy}
@@ -548,6 +639,16 @@ export default function AppointmentsPage() {
                               <Trash2 size={14} />
                             </button>
                           </>
+                        ) : (
+                          <button
+                            disabled={busy}
+                            onClick={() => handleDelete(b._id, b.name)}
+                            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                            style={{ background: token.rose, color: token.roseDeep }}
+                            title="Delete appointment"
+                          >
+                            <Trash2 size={13} />
+                          </button>
                         )}
                       </div>
                     </td>
